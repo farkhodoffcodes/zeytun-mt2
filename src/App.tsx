@@ -5,7 +5,7 @@ import Product from "./Components/Product"
 
 const App = () => {
   return (
-    <div>
+    <div className="">
       <Routes>
         <Route path="/" element={<AppIndex/>} />
         <Route path="/login" element={<Login/>} />
