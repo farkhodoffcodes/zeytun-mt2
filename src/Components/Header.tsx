@@ -1,79 +1,120 @@
-import { Link } from "react-router-dom"
-import img from "./img/banner.jpg"
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import img from "./img/banner.jpg";
 
-const Header = () => {
-  
+const Header: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>(() => {
+    return localStorage.getItem('searchQuery') || '';
+  });
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [previousQueries, setPreviousQueries] = useState<string[]>(() => {
+    return JSON.parse(localStorage.getItem('previousQueries') || '[]');
+  });
+
+  useEffect(() => {
+    localStorage.setItem('searchQuery', searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    localStorage.setItem('previousQueries', JSON.stringify(previousQueries));
+  }, [previousQueries]);
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (searchQuery && !previousQueries.includes(searchQuery)) {
+      setPreviousQueries([searchQuery, ...previousQueries].slice(0, 5)); // Save only last 5 queries
+    }
+    setSearchQuery("");
+    setSuggestions([]);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (query.length > 0) {
+      const filteredSuggestions = previousQueries.filter(q => q.toLowerCase().includes(query.toLowerCase()));
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSelect = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setSuggestions([]);
+  };
+
   return (
     <div>
-      {/* <Link to={'/login'}>
-        login
-      </Link> */}
-        
-<img src={img} alt="" />
-<nav className="bg-white border-gray-200 dark:bg-gray-900">
-  <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-  <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
-      <span className="self-center text-3xl text-yellow-300 font-bold whitespace-nowrap">ZAYTUN</span>
-  </a>
- 
-<form className="max-w-md mx-auto">   
-    <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Что вас интересует ?</label>
-    <div className="relative">
-        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+      <img src={img} alt="" />
+      <nav className="container flex justify-between py-3 align-middle text-sm gap-12 px-20">
+        <div className="flex align-middle gap-4">
+          <p className="text-yellow-300 text-3xl font-bold">ZAYTUN</p>
+          <span className="text-gray-300 mt-3">uz / rus</span>
+        </div>
+        <form onSubmit={handleSearch} className="relative flex items-center">
+          <input
+            type="text"
+            className="rounded-md border pl-4 pr-20 py-2 w-80 border-yellow-300 hover:border-yellow-300"
+            placeholder="Что вы хотите найти"
+            value={searchQuery}
+            onChange={handleChange}
+            style={{ height: '40px' }} // Specify the height here
+          />
+          <button type="submit" className="absolute right-0 top-2.1 h-full bg-yellow-300 rounded-r-md px-5" style={{ height: '40px' }}>
+            Найти
+          </button>
+          {suggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 bg-white border border-t-0 rounded-b-md shadow-lg z-10">
+              {suggestions.map((suggestion, index) => (
+                <div
+                  key={index}
+                  className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSelect(suggestion)}
+                >
+                  {suggestion}
+                </div>
+              ))}
+            </div>
+          )}
+        </form>
+        <div className="flex gap-3 items-center justify-center">
+          <button className="rounded-full bg-yellow-300 py-3">
+            <i className="fa-regular fa-heart py-0 px-4"></i>
+          </button>
+          <p className="text-sm">
+            Избранное  2 товара
+          </p>
+          <button className="rounded-full bg-yellow-300 px-3 py-3">
+            <svg className="" width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.66675 1.66669H2.32099C2.79938 1.66669 3.03857 1.66669 3.23303 1.75343C3.40445 1.8299 3.5509 1.95307 3.6556 2.10885C3.77438 2.28557 3.81536 2.52123 3.89733 2.99254L4.07254 4.00002M4.07254 4.00002L4.49181 6.41078C4.67099 7.44106 4.76058 7.9562 5.02591 8.3273C5.25953 8.65405 5.58614 8.90289 5.96319 9.0414C6.39141 9.19871 6.91185 9.14834 7.95272 9.04761L13.4094 8.51955C13.5188 8.50896 13.5734 8.50367 13.6205 8.49684C14.5683 8.35936 15.2856 7.56929 15.3311 6.61268C15.3334 6.56515 15.3334 6.51022 15.3334 6.40035V6.40035C15.3334 6.28364 15.3334 6.22528 15.3309 6.17559C15.281 5.17178 14.4938 4.36097 13.4919 4.28132C13.4423 4.27737 13.384 4.27565 13.2673 4.27219L4.07254 4.00002Z" stroke="#171F26" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              <ellipse cx="6.66683" cy="12.6667" rx="1.33333" ry="1.33333" stroke="#171F26" stroke-width="1.8" />
+              <ellipse cx="13.0001" cy="12.6667" rx="1.33333" ry="1.33333" stroke="#171F26" stroke-width="1.8" />
             </svg>
+          </button>
+          <p>Корзина 10 <span className="text-yellow-300 ">товар</span></p>
+          <button className="rounded-full bg-yellow-300 px-5 py-3 ml-10">
+            <i className="fa-solid fa-user"></i>
+            <span className="ml-2">Login</span>
+          </button>
         </div>
-        <input type="search" id="default-search" className="block w-96 p-2  ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-yellow-500 dark:focus:border-yellow-500" placeholder="Что вы хотите найти ..." required />
-        <button type="submit" className="text-white absolute w-20 h-10 mt-20 end-2.5 bottom-2.5 bg-blue-700 hover:bg-yellow-200 focus:ring-4 focus:outline-none focus:ring-yellow-200 font-medium rounded-lg text-sm px-4 py-2 dark:bg-yellow-200 dark:hover:bg-yellow-200 dark:focus:ring-yellow-200">Найти</button>
-    </div>
-</form>
-
-  <div className="flex md:order-2">
-    <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false" className="md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 me-1">
-      <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-      </svg>
-      <span className="sr-only">Search</span>
-    </button>
-    <div className="relative hidden md:block">
-      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-        <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-        </svg>
-       
+      </nav>
+      <div className="flex align-center container px-20 py-3 text-sm justify-between">
+        <a href="#" className="gap-10">Каталог товаров</a>
+        <a href="#" className="">Продукты</a>
+        <a href="#" className="">Одежда и обувь</a>
+        <a href="#" className="">Электроника</a>
+        <a href="#" className="">Для дома</a>
+        <a href="#" className="">Спорт</a>
+        <a href="#" className="">Дети</a>
+        <a href="#">Книги</a>
+        <a href="#">Бренды</a>
+        <a href="#">Зоо</a>
+        <a href="#">Компьютеры</a>
+        <a href="#">Здоровье</a>
+        <a href="#">Ремонт</a>
       </div>
-      
     </div>
-    
-  </div>
-    <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
-      <div className="relative mt-3 md:hidden">
-        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-          </svg>
-        </div>
-        <input type="text" id="search-navbar" className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search..."/>
-      </div>
-      <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-        <li>
-          <a href="#" className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</a>
-        </li>
-        <li>
-          <a href="#" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>
-        </li>
-        <li>
-          <a href="#" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Services</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+  );
+};
 
-    </div>
-
-      )
-}
-
-export default Header
+export default Header;

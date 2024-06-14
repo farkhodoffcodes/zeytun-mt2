@@ -4,7 +4,7 @@ import Login from "./Auth/Login"
 
 const App = () => {
   return (
-    <div>
+    <div className="">
       <Routes>
         <Route path="/" element={<AppIndex/>} />
         <Route path="/login" element={<Login/>} />
