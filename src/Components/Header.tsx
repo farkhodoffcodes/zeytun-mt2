@@ -99,7 +99,7 @@ const Header: React.FC = () => {
         </div>
       </nav>
       <div className="flex align-center container px-20 py-3 text-sm justify-between">
-        <a href="#" className="gap-10">Каталог товаров</a>
+        <a href="/category" className="gap-10">Каталог товаров</a>
         <a href="#" className="">Продукты</a>
         <a href="#" className="">Одежда и обувь</a>
         <a href="#" className="">Электроника</a>
