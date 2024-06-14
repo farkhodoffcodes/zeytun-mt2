@@ -1,0 +1,46 @@
+{
+    "products": [
+        {
+            "id":1,
+            "image": "../public/product-1.png",
+            "title":"Huawei P40 Pro Plus 8/240GB, White0,",
+            "price": "8 460 000"
+
+        },
+        {
+            "id":2,
+            "image": "../public/product-2.png",
+            "title":"Sony WH-1000XM3 беспроводные наушники",
+            "price": "2 720 000"
+
+        },
+        {
+            "id":3,
+            "image": "../public/product-3.png",
+            "title":"Настенная сплит система Chigo HI912XA",
+            "price": "3 199 200"
+
+        },
+        {
+            "id":4,
+            "image": "../public/product-4.png",
+            "title":"Bosch B29S накопительный водонагреватель",
+            "price": "12 118 000"
+
+        },
+        {
+            "id":5,
+            "image": "../public/product-5.png",
+            "title":"Bosch B29S накопительный водонагреватель",
+            "price": "12 118 000"
+
+        },
+        {
+            "id":6,
+            "image": "../public/product-6.png",
+            "title":"Bosch B29S накопительный водонагреватель",
+            "price": "12 118 000"
+
+        }
+    ]
+}
