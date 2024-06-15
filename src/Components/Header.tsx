@@ -1,6 +1,10 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import img from "./img/banner.jpg";
 
+
+
+
+
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>(() => {
     return localStorage.getItem('searchQuery') || '';
@@ -54,7 +58,7 @@ const Header: React.FC = () => {
         <form onSubmit={handleSearch} className="relative flex items-center">
           <input
             type="text"
-            className="rounded-md border pl-4 pr-20 py-2 w-80 border-yellow-300 hover:border-yellow-300"
+            className="rounded-md border pl-4 pr-20 py-2 w-80  border-yellow-300 hover:border-yellow-300"
             placeholder="Что вы хотите найти"
             value={searchQuery}
             onChange={handleChange}
