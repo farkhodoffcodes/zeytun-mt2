@@ -50,21 +50,25 @@ const Header: React.FC = () => {
   return (
     <div>
       <img src={img} alt="" />
-      <nav className="container flex justify-between py-3 align-middle text-sm gap-12 px-20">
-        <div className="flex align-middle gap-4">
+      <nav className="container flex justify-between py-3 align-middle text-sm gap-12 px-12">
+        <div className="flex align-middle gap-2">
           <p className="text-yellow-300 text-3xl font-bold">ZAYTUN</p>
-          <span className="text-gray-300 mt-3">uz / rus</span>
+          <span className="text-gray-300 mt-3 w-12">uz / rus</span>
         </div>
-        <form onSubmit={handleSearch} className="relative flex items-center">
+        <form onSubmit={handleSearch} className="relative flex  items-center">
           <input
             type="text"
-            className="rounded-md border pl-4 pr-20 py-2 w-80  border-yellow-300 hover:border-yellow-300"
+            className="rounded-md border pl-4 pr-20 py-2 input border-yellow-300 hover:border-yellow-300 outline-0    "
             placeholder="Что вы хотите найти"
             value={searchQuery}
             onChange={handleChange}
-            style={{ height: '40px' }} // Specify the height here
+            style={{ height: '40px', width: '500px' }} // inputni kengaytirish
           />
-          <button type="submit" className="absolute right-0 top-2.1 h-full bg-yellow-300 rounded-r-md px-5" style={{ height: '40px' }}>
+          <button
+            type="submit"
+            className="absolute right-0 top-2.1 h-full bg-yellow-300 rounded-r-md px-5"
+            style={{ height: '40px' }}
+          >
             Найти
           </button>
           {suggestions.length > 0 && (
@@ -96,7 +100,7 @@ const Header: React.FC = () => {
             </svg>
           </button>
           <p>Корзина 10 <span className="text-yellow-300 ">товар</span></p>
-          <button className="rounded-full bg-yellow-300 px-5 py-3 ml-10">
+          <button className="rounded-full bg-yellow-300 px-7 py-3 w-40 ml-10">
             <i className="fa-solid fa-user"></i>
             <span className="ml-2">Login</span>
           </button>
