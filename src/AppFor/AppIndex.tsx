@@ -5,6 +5,7 @@ const AppIndex = () => {
   return (
     <div>
       <Header />
+      
       <Footer/>
     </div>
   )

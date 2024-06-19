@@ -6,7 +6,8 @@ const Notifications = () => {
     <>
     <Header/>
     <Container>
-        <div>kjjhghgjklhjgfg</div>
+        <div>
+        </div>
     </Container>
     </>
   )

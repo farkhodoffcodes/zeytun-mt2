@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import img from "./img/banner.jpg";
+import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>(() => {
@@ -91,11 +92,14 @@ const Header: React.FC = () => {
               <ellipse cx="13.0001" cy="12.6667" rx="1.33333" ry="1.33333" stroke="#171F26" stroke-width="1.8" />
             </svg>
           </button>
-          <p>Корзина 10 <span className="text-yellow-300 ">товар</span></p>
-          <button className="rounded-full bg-yellow-300 px-5 py-3 ml-10">
-            <i className="fa-solid fa-user"></i>
-            <span className="ml-2">Login</span>
-          </button>
+          <p>Корзина { } <span className="text-yellow-300 ">товар</span></p>
+          <Link
+            to={'/login'}>
+            <button className="rounded-full bg-yellow-300 px-5 py-3 ml-10">
+              <i className="fa-solid fa-user"></i>
+              <span className="ml-2">Login</span>
+            </button>
+          </Link>
         </div>
       </nav>
       <div className="flex align-center container px-20 py-3 text-sm justify-between">
