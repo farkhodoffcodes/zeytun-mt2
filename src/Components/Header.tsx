@@ -1,26 +1,22 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-// import img from "./img/banner.jpg";
 import { Link } from "react-router-dom";
-
-
-
-
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>(() => {
-    return localStorage.getItem('searchQuery') || '';
+    return sessionStorage.getItem('searchQuery') || '';
   });
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [previousQueries, setPreviousQueries] = useState<string[]>(() => {
-    return JSON.parse(localStorage.getItem('previousQueries') || '[]');
+    return JSON.parse(sessionStorage.getItem('previousQueries') || '[]');
   });
+  const [language, setLanguage] = useState<'uz' | 'ru'>('uz');
 
   useEffect(() => {
-    localStorage.setItem('searchQuery', searchQuery);
+    sessionStorage.setItem('searchQuery', searchQuery);
   }, [searchQuery]);
 
   useEffect(() => {
-    localStorage.setItem('previousQueries', JSON.stringify(previousQueries));
+    sessionStorage.setItem('previousQueries', JSON.stringify(previousQueries));
   }, [previousQueries]);
 
   const handleSearch = (e: FormEvent) => {
@@ -48,26 +44,51 @@ const Header: React.FC = () => {
     setSuggestions([]);
   };
 
+  const handleFocus = () => {
+    if (searchQuery.length > 0) {
+      const filteredSuggestions = previousQueries.filter(q => q.toLowerCase().includes(searchQuery.toLowerCase()));
+      setSuggestions(filteredSuggestions);
+    }
+  };
+
+  const handleLanguageChange = (lang: 'uz' | 'ru') => {
+    setLanguage(lang);
+  };
+
   return (
     <div>
-      {/* <img src={img} alt="" /> */}
       <nav className="container flex justify-between py-3 align-middle text-sm gap-12 px-12">
-        <div className="flex align-middle gap-2">
+        <div className="flex align-middle items-center gap-2">
           <p className="text-yellow-300 text-3xl font-bold">ZAYTUN</p>
-          <span className="text-gray-300 mt-3 w-12">uz / rus</span>
+          <div className="flex items-center gap-1">
+            <span 
+              className={`cursor-pointer ${language === 'uz' ? 'text-gray-300' : ''}`} 
+              onClick={() => handleLanguageChange('uz')}
+            >
+              uz
+            </span>
+            /
+            <span 
+              className={`cursor-pointer ${language === 'ru' ? 'text-gray-300' : ''}`} 
+              onClick={() => handleLanguageChange('ru')}
+            >
+              rus
+            </span>
+          </div>
         </div>
-        <form onSubmit={handleSearch} className="relative flex  items-center">
+        <form onSubmit={handleSearch} className="relative flex items-center">
           <input
             type="text"
-            className="rounded-md border pl-4 pr-20 py-2 input border-yellow-300 hover:border-yellow-300 outline-0    "
+            className={`rounded-md border pl-4 pr-20 py-2 input ${language === 'uz' ? 'border-gray-300 hover:border-gray-300 focus:border-gray-300 focus:ring-gray-300' : 'border-yellow-300 hover:border-yellow-300 focus:border-yellow-300 focus:ring-yellow-300'}`}
             placeholder="Что вы хотите найти"
             value={searchQuery}
             onChange={handleChange}
-            style={{ height: '40px', width: '500px' }} // inputni kengaytirish
+            onFocus={handleFocus}
+            style={{ height: '40px', width: '500px' }}
           />
           <button
             type="submit"
-            className="absolute right-0 top-2.1 h-full bg-yellow-300 rounded-r-md px-5"
+            className={`absolute right-0 top-2.1 h-full rounded-r-md px-5 ${language === 'uz' ? 'bg-gray-300' : 'bg-yellow-300'}`}
             style={{ height: '40px' }}
           >
             Найти
@@ -87,35 +108,31 @@ const Header: React.FC = () => {
           )}
         </form>
         <div className="flex gap-3 items-center justify-center">
-          <button className="rounded-full bg-yellow-300 py-3">
-            <i className="fa-regular fa-heart py-0 px-4"></i>
+          <button className={`rounded-full py-3 ${language === 'uz' ? 'bg-gray-300' : 'bg-yellow-300'}`}>
+          <Link to="/Tanlanganlar">
+              <i className="fa-regular fa-heart py-0 px-4"></i>
+            </Link>
           </button>
           <p className="text-sm">
-            Избранное  2 товара
+            Избранное 2 товара
           </p>
-          <button className="rounded-full bg-yellow-300 px-3 py-3">
+          <button className={`rounded-full px-3 py-3 ${language === 'uz' ? 'bg-gray-300' : 'bg-yellow-300'}`}>
             <svg className="" width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1.66675 1.66669H2.32099C2.79938 1.66669 3.03857 1.66669 3.23303 1.75343C3.40445 1.8299 3.5509 1.95307 3.6556 2.10885C3.77438 2.28557 3.81536 2.52123 3.89733 2.99254L4.07254 4.00002M4.07254 4.00002L4.49181 6.41078C4.67099 7.44106 4.76058 7.9562 5.02591 8.3273C5.25953 8.65405 5.58614 8.90289 5.96319 9.0414C6.39141 9.19871 6.91185 9.14834 7.95272 9.04761L13.4094 8.51955C13.5188 8.50896 13.5734 8.50367 13.6205 8.49684C14.5683 8.35936 15.2856 7.56929 15.3311 6.61268C15.3334 6.56515 15.3334 6.51022 15.3334 6.40035V6.40035C15.3334 6.28364 15.3334 6.22528 15.3309 6.17559C15.281 5.17178 14.4938 4.36097 13.4919 4.28132C13.4423 4.27737 13.384 4.27565 13.2673 4.27219L4.07254 4.00002Z" stroke="#171F26" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
               <ellipse cx="6.66683" cy="12.6667" rx="1.33333" ry="1.33333" stroke="#171F26" stroke-width="1.8" />
               <ellipse cx="13.0001" cy="12.6667" rx="1.33333" ry="1.33333" stroke="#171F26" stroke-width="1.8" />
             </svg>
           </button>
-          <p>Корзина { } <span className="text-yellow-300 ">товар</span></p>
-          <Link
-            to={'/login'}>
-            <button className="rounded-full bg-yellow-300 px-5 py-3 ml-10">
+          <p>Корзина 10 <span className="text-yellow-300">товар</span></p>
+          <Link to={'/login'}>
+            <button className={`rounded-full px-5 py-3 ml-10 ${language === 'uz' ? 'bg-gray-300' : 'bg-yellow-300'}`}>
               <i className="fa-solid fa-user"></i>
               <span className="ml-2">Login</span>
             </button>
           </Link>
-          <p>Корзина 10 <span className="text-yellow-300 ">товар</span></p>
-          <button className="rounded-full bg-yellow-300 px-7 py-3 w-40 ml-10">
-            <i className="fa-solid fa-user"></i>
-            <span className="ml-2">Login</span>
-          </button>
         </div>
       </nav>
-      <div className="flex align-center container px-20 py-3 text-sm justify-between">
+      <div className="flex align-center container px-20 py-4 text-sm justify-between">
         <a href="/category" className="gap-10">Каталог товаров</a>
         <a href="#" className="">Продукты</a>
         <a href="#" className="">Одежда и обувь</a>

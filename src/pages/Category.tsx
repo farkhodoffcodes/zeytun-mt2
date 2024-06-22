@@ -1,12 +1,10 @@
 import styled from "styled-components"
 import Header from "../Components/Header"
-import Hero from "../Components/Hero"
 
 const Category = () => {
   return (
     <>
         <Header/>
-        <Hero/>
         <Container> 
             <div className="category-content">
                <div className="sidebar">menu</div>
