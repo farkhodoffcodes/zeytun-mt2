@@ -132,22 +132,6 @@ const Header: React.FC = () => {
           </Link>
         </div>
       </nav>
-<<<<<<< HEAD
-      <div className="flex align-center container px-20 py-3 text-sm justify-between">
-        <Link to={'/category'}  className="gap-10">Каталог товаров</Link>
-        <Link to={'/'} className="">Продукты</Link>
-        <Link to={'/'}  className="">Одежда и обувь</Link>
-        <Link to={'/'}  className="">Электроника</Link>
-        <Link to={'/'}  className="">Для дома</Link>
-        <Link to={'/'}  className="">Спорт</Link>
-        <Link to={'/'}  className="">Дети</Link>
-        <Link to={'/'} >Книги</Link>
-        <Link to={'/'} >Бренды</Link>
-        <Link to={'/'} >Зоо</Link>
-        <Link to={'/'} >Компьютеры</Link>
-        <Link to={'/'} >Здоровье</Link>
-        <Link to={'/'} >Ремонт</Link>
-=======
       <div className="flex align-center container px-20 py-4 text-sm justify-between">
         <a href="/category" className="gap-10">Каталог товаров</a>
         <a href="#" className="">Продукты</a>
@@ -162,7 +146,6 @@ const Header: React.FC = () => {
         <a href="#">Компьютеры</a>
         <a href="#">Здоровье</a>
         <a href="#">Ремонт</a>
->>>>>>> 2883949b09d1d0717dd9f24c463577ae6cd58f2c
       </div>
     </div>
   );
