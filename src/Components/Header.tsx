@@ -116,19 +116,19 @@ const Header: React.FC = () => {
         </div>
       </nav>
       <div className="flex align-center container px-20 py-3 text-sm justify-between">
-        <a href="/category" className="gap-10">Каталог товаров</a>
-        <a href="#" className="">Продукты</a>
-        <a href="#" className="">Одежда и обувь</a>
-        <a href="#" className="">Электроника</a>
-        <a href="#" className="">Для дома</a>
-        <a href="#" className="">Спорт</a>
-        <a href="#" className="">Дети</a>
-        <a href="#">Книги</a>
-        <a href="#">Бренды</a>
-        <a href="#">Зоо</a>
-        <a href="#">Компьютеры</a>
-        <a href="#">Здоровье</a>
-        <a href="#">Ремонт</a>
+        <Link to={'/category'}  className="gap-10">Каталог товаров</Link>
+        <Link to={'/'} className="">Продукты</Link>
+        <Link to={'/'}  className="">Одежда и обувь</Link>
+        <Link to={'/'}  className="">Электроника</Link>
+        <Link to={'/'}  className="">Для дома</Link>
+        <Link to={'/'}  className="">Спорт</Link>
+        <Link to={'/'}  className="">Дети</Link>
+        <Link to={'/'} >Книги</Link>
+        <Link to={'/'} >Бренды</Link>
+        <Link to={'/'} >Зоо</Link>
+        <Link to={'/'} >Компьютеры</Link>
+        <Link to={'/'} >Здоровье</Link>
+        <Link to={'/'} >Ремонт</Link>
       </div>
     </div>
   );
