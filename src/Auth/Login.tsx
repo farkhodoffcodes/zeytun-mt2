@@ -1,6 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
@@ -20,45 +20,74 @@ const auth = getAuth(app);
 const LoginPage: React.FC = () => {
   const [lang, setLang] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [error, setError] = useState<string>('');
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+
+  useEffect(() => {
+    (window as any).recaptchaVerifier = new RecaptchaVerifier(
+      'RecaptchaVerifier',
+      {
+        size: 'invisible',
+        callback: (response: any) => {
+          console.log("Recaptcha resolved", response);
+        },
+      },
+      auth
+    );
+  }, []);
 
   const ChangeLang = lang
     ? {
       title: 'Welcome!',
-      labelPass: 'Password',
       labelNum: 'Number',
-      PassSpan: 'Enter more than 4 characters',
-      ButtonText: 'Submit',
+      codeSpan: 'Enter the verification code',
+      sendCodeText: 'Send Code',
+      verifyText: 'Verify Code',
     }
     : {
       title: 'Добро пожаловать!',
-      labelPass: 'Пароль',
       labelNum: 'Номер',
-      PassSpan: 'Введите более 4 символов',
-      ButtonText: 'Отправить',
+      codeSpan: 'Введите код подтверждения',
+      sendCodeText: 'Отправить код',
+      verifyText: 'Проверить код',
     };
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPhoneNumber(e.target.value);
   };
 
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
+  const handleCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setVerificationCode(e.target.value);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSendCode = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const email = `+998${phoneNumber}`; 
+    const fullPhoneNumber = `+998${phoneNumber}`;
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+    const appVerifier = (window as any).recaptchaVerifier;
+    signInWithPhoneNumber(auth, fullPhoneNumber, appVerifier)
+      .then((confirmationResult) => {
+        setConfirmationResult(confirmationResult);
+        console.log('SMS sent');
+        (window as any).confirmationResult = confirmationResult; // Save the confirmation result to window object
+      })
+      .catch((error) => {
+        setError(error.message);
+        console.error('Error sending SMS:', error);
+      });
+  };
+
+  const handleVerifyCode = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    confirmationResult?.confirm(verificationCode)
+      .then((result) => {
+        const user = result.user;
         console.log('User signed in:', user);
       })
       .catch((error) => {
         setError(error.message);
-        console.error('Error signing in:', error);
+        console.error('Error verifying code:', error);
       });
   };
 
@@ -92,7 +121,7 @@ const LoginPage: React.FC = () => {
                 {ChangeLang.title}
               </h1>
               {error && <p className='text-red-500'>{error}</p>}
-              <form className='space-y-4 md:space-y-6' onSubmit={handleSubmit}>
+              <form className='space-y-4 md:space-y-6' onSubmit={confirmationResult ? handleVerifyCode : handleSendCode}>
                 <div>
                   <label
                     htmlFor='numberInp'
@@ -110,37 +139,33 @@ const LoginPage: React.FC = () => {
                   />
                   <span className='text-slate-500'>998</span>
                 </div>
-                <div className='py-4'>
-                  <label
-                    htmlFor='password'
-                    className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
-                  >
-                    {ChangeLang.labelPass}
-                  </label>
-                  <input
-                    type='password'
-                    id='password'
-                    className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                    placeholder='••••••••'
-                    value={password}
-                    onChange={handlePasswordChange}
-                    required
-                  />
-                  <span className='text-slate-500'>{ChangeLang.PassSpan}</span>
-                </div>
+                {confirmationResult && (
+                  <div className='py-4'>
+                    <label
+                      htmlFor='verificationCode'
+                      className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                    >
+                      {ChangeLang.codeSpan}
+                    </label>
+                    <input
+                      type='text'
+                      id='verificationCode'
+                      className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                      placeholder='123456'
+                      value={verificationCode}
+                      onChange={handleCodeChange}
+                      required
+                    />
+                  </div>
+                )}
                 <button
                   type='submit'
                   className='w-56 bg-slate-500 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
                 >
-                  {ChangeLang.ButtonText}
-                </button>
-                <button
-                  type='submit'
-                  className='w-56 bg-slate-500 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
-                >
-                  ruyhatda utish
+                  {confirmationResult ? ChangeLang.verifyText : ChangeLang.sendCodeText}
                 </button>
               </form>
+              <div id='recaptcha-container'></div>
             </div>
           </div>
         </div>
