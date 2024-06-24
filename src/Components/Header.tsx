@@ -124,7 +124,7 @@ const Header: React.FC = () => {
             </svg>
           </button>
           <p>Корзина 10 <span className="text-yellow-300">товар</span></p>
-          <Link to={'/login'}>
+          <Link to={'/Singin'}>
             <button className={`rounded-full px-5 py-3 ml-10 ${language === 'uz' ? 'bg-gray-300' : 'bg-yellow-300'}`}>
               <i className="fa-solid fa-user"></i>
               <span className="ml-2">Login</span>
